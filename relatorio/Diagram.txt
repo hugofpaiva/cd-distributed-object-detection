@@ -1,0 +1,42 @@
+title Distributed Object Detection
+
+Cliente->Servidor: curl -F ‘video=@videoname.m4v’ http://localhost:5000
+Servidor->Redis: save frames and video information
+Worker-> Servidor: register(self.ID)
+Servidor->Redis: check if worker is already registered
+Redis-->Servidor: response to request
+alt if that name hasn't been registered yet 
+Servidor-->Worker: 'Worker registered!'
+Servidor->Redis: save worker's name
+loop each 25 seconds
+Worker->Servidor: heartbit
+Servidor->Redis: fetch worker information
+Redis-->Servidor: information
+alt if worker's hearbit < 30s 
+Servidor->Redis: update worker's information
+else worker is assumed dead
+Servidor->Redis: delete worker's information
+end
+end
+
+Worker->Servidor: request frames when available
+Servidor->Redis: fetch frame
+alt if frame is available 
+Redis-->Servidor: frame
+Servidor->Worker: frame
+Worker--> Servidor: send result of processed frame
+Servidor->Redis: save results for video statistics
+
+else if there are no frames
+loop every 2 seconds
+Worker->Servidor: request frames when available
+end
+end 
+else else if name is already in redis database 
+Servidor-->Worker: Registration failed
+Worker->Servidor: register with new ID
+end
+
+
+
+

@@ -1,0 +1,6 @@
+*pyc
+venv/
+__pycache__
+*.weights
+.DS_Store
+*.rdb
